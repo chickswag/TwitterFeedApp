@@ -1,0 +1,8 @@
+.card-body {
+    /*background: #E0E0E0;*/
+}
+.card-header {
+    padding: 10px 0 0;
+    border-bottom: 20px solid #000;
+    background: #fff;
+}
