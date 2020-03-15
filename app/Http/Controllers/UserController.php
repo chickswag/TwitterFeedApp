@@ -18,7 +18,7 @@ class UserController extends Controller
     {
         $title = 'Feeds Dashboard';
         $users = User::get();
-        $feeds = UserFeeds::orderBy('created_at','desc')->get();
+        $feeds = UserFeeds::orderBy('created_at','asc')->get();
 
         return view('layouts.feeds',compact('users','title','feeds'))->render();
     }
@@ -45,31 +45,36 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $name
+     * @return array|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
+     * @throws \Throwable
      */
     public function show($name)
     {
 
-        $user = User::where('name',$name)->first();
-        if($user){
-            $title = $name. ' feeds ';
-            $feed =  UserFeeds::find($user->id);
-            $userfeed = '';
-            if($feed){
-                $users = User::get();
-                $userfeed = UserFeeds::orderBy('created_at','desc')->get();
-
+        try {
+            $user = User::where('name',$name)->first();
+            if($user){
+                $title = $name. ' feeds ';
+                $userFeed =  UserFeeds::where('user_id',$user->id)->orderBy('created_at','asc')->get();
+                if(count($userFeed) > 0){
+                    return view('layouts.user_feed.user_feed',compact('userFeed','title'))->render();
+                }
+                else{
+                    return view('layouts.user_feed.user_feed',compact('title'))->render();
+                }
             }
-            return view('layouts.user_feed.user_feed',compact('userfeed','title'))->render();
-
-
+            else{
+                return redirect('/')
+                    ->withErrors('User doesnt exists')
+                    ->withInput();
+            }
         }
-        else{
-            return response()->back()->withErrors('No user');
+        catch (\Exception $e) {
+
+            return $e->getMessage();
         }
+
 
 
     }

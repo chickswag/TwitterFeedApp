@@ -7,24 +7,28 @@
 
     </div>
 
-        @if(isset($userfeed) && count($userfeed) == 0)
-            <div class="card-body bg-warning">
-            <div class=" ">No Feeds in this timeline</div>
-            </div>
-        @else
-            <div class="card-body">
-                @foreach($userfeed as $feed)
+            @if(!isset($userFeed))
+                <div class="card-body bg-warning">
+                    <div class=" ">No Feeds in this timeline</div>
+                </div>
+                @else
 
-                    <div class="row">
-                        <div class="bg-primary ">{{ $feed->tweet }}</div>
-                    </div>
+                <div class="card-body">
+                    @foreach($userFeed as $feed)
 
-                @endforeach
-            </div>
-        @endif
+                        <div class="d-flex flex-column mb-3">
+
+                            <div class="font-italic">{{$feed->getUser->name }}</div>
+                            <div class="">{{$feed->tweet }}</div>
+                            <div class="">{{ $feed->created_at}}</div>
+                        </div>
+
+                    @endforeach
+                </div>
+            @endif
 
     <div class="card-footer">
-        <div class="btn btn-danger">Back</div>
+        <div class="btn btn-danger"><a href="{{ URL::previous()}}">Back</a></div>
     </div>
 
     @endsection

@@ -14,14 +14,14 @@
             @else
                 @foreach($users as $user)
 
-                    <div class=" bg-light text-dark flex-fill p-2"><u><a href="" class="">{{ $user->name }}</a></u>
+                    <div class=" bg-light text-dark flex-fill p-2"><u><a href="{{URL::to('/user/'.$user->name)}}" class="">{{ $user->name }}</a></u>
                         <div class="border border-primary"></div><br/>
 
                                 @if(!is_null($user->user_ids))
                                 <label class="text-dark font-italic">follows</label>
                                     @foreach(explode('|',$user->user_ids) as $follows)
                                         @foreach($user->where('id', $follows)->pluck('name') as $name)
-                                            <a href="" class=" btn-info text-light p-2 m-2">{{$name}}</a>
+                                            <a href="{{URL::to('/user/'.$name)}}" class=" btn-info text-light p-2 m-2">{{$name}}</a>
                                         @endforeach
                                     @endforeach
 
@@ -51,9 +51,12 @@
                 @foreach($feeds as $feed)
 
                     <div class="row">
-                        <div class="bg-primary ">{{ $feed->tweet }}</div>
-                    </div>
+                        <div class="p-2 ">
+                            <div class=" ">{{ $feed->created_at.' '.$feed->getUser->name . ' > '.$feed->tweet }}</div>
 
+                        </div>
+                    </div>
+                    <hr/>
                 @endforeach
             </div>
         @endif
