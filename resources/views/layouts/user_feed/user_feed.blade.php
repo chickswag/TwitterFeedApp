@@ -18,8 +18,8 @@
 
                         <div class="d-flex flex-column mb-3">
 
-                            <div class="font-italic">{{$feed->getUser->name }}</div>
-                            <div class="">{{$feed->tweet }}</div>
+                            <div class="font-italic">{{$feed->getUser->user_name }}</div>
+                            <div class="">{{Illuminate\Support\Str::limit($feed->tweet, 140, '...') }}</div>
                             <div class="">{{ $feed->created_at}}</div>
                         </div>
 

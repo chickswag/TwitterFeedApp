@@ -16,7 +16,7 @@ class UserFeeds extends Migration
         Schema::create('user_feeds', function (Blueprint $table) {
             $table->increments('id');
             $table->string('user_id')->nullable();
-            $table->string('tweet')->nullable();
+            $table->string('tweet',140)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

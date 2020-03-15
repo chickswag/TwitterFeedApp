@@ -45,18 +45,28 @@ class UserController extends Controller
     }
 
     /**
-     * @param $name
+     * @param $user_name
      * @return array|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|string
      * @throws \Throwable
      */
-    public function show($name)
+    public function show($user_name)
     {
 
         try {
-            $user = User::where('name',$name)->first();
+            $user = User::where('user_name',$user_name)->first();
+            $userAll = User::get();
             if($user){
-                $title = $name. ' feeds ';
-                $userFeed =  UserFeeds::where('user_id',$user->id)->orderBy('created_at','asc')->get();
+                $title = $user_name. ' feeds ';
+                $userFollowedTweets =  User::where('id',$user->id)->pluck('user_ids');
+
+                $arrIds =  [];
+                foreach ( $userFollowedTweets as  $tweets){
+
+                    foreach (explode('|',$tweets) as $tw){
+                        array_push($arrIds, $tw);
+                    }
+                }
+                $userFeed =  UserFeeds::whereIn('user_id',[1,2])->orderBy('created_at','asc')->get();
                 if(count($userFeed) > 0){
                     return view('layouts.user_feed.user_feed',compact('userFeed','title'))->render();
                 }
@@ -66,7 +76,7 @@ class UserController extends Controller
             }
             else{
                 return redirect('/')
-                    ->withErrors('User doesnt exists')
+                    ->withErrors('User doesn\'t exists')
                     ->withInput();
             }
         }

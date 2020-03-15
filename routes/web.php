@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,4 +15,9 @@ use Illuminate\Support\Facades\Route;
 */
 Route::resource('/', 'UserController');
 Route::get('/user/{post}','UserController@show')->name('user.show');
+Route::get('/foo', function () {
+    $exitCode = Artisan::call('add:user');
+
+    //
+});
 
