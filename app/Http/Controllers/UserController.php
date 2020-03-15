@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use App\UserFeeds;
 use Illuminate\Http\Request;
-
+use Input;
+use Validator;
+use Redirect;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return array|string
+     * @throws \Throwable
      */
     public function index()
     {
-        //
+        $title = 'Feeds Dashboard';
+        $users = User::get();
+        $feeds = UserFeeds::orderBy('created_at','desc')->get();
+
+        return view('layouts.feeds',compact('users','title','feeds'))->render();
     }
 
     /**
@@ -43,9 +50,28 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($name)
     {
-        //
+
+        $user = User::where('name',$name)->first();
+        if($user){
+            $title = $name. ' feeds ';
+            $feed =  UserFeeds::find($user->id);
+            $userfeed = '';
+            if($feed){
+                $users = User::get();
+                $userfeed = UserFeeds::orderBy('created_at','desc')->get();
+
+            }
+            return view('layouts.user_feed.user_feed',compact('userfeed','title'))->render();
+
+
+        }
+        else{
+            return response()->back()->withErrors('No user');
+        }
+
+
     }
 
     /**

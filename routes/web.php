@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::resource('/', 'UserController');
+Route::get('/user/{post}','UserController@show')->name('user.show');
 
-Route::get('/', function () {
-    return view('feeds');
-});
