@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class createUsers extends Command
 {
@@ -37,27 +39,44 @@ class createUsers extends Command
      */
     public function handle()
     {
-        $CSVFile = public_path('users.txt');
-        if(!file_exists($CSVFile) || !is_readable($CSVFile))
-            return false;
 
-        $header = null;
-        $data = array();
-
-        if (($handle = fopen($CSVFile,'r')) !== false){
-            while (($row = fgetcsv($handle, 1000, ',')) !==false){
-                if (!$header)
-                    $header = $row;
-                else
-                    $data[] = array_combine($header, $row);
+        try{
+            $files = File::exists(public_path('users.txt'));
+            if(!$files){
+                return false;
             }
-            fclose($handle);
+            $header = null;
+            $data = array();
+            $content = File::get(public_path('users.txt'));
+
+            foreach (explode("\n", $content) as $key=>$line){
+                $array[$key] = explode(',', $line);
+            }
+            dd($content);
+            if (($handle = fopen($CSVFile,'r')) !== false){
+                while (($row = fgetcsv($handle, 1000, ',')) !==false){
+                    if (!$header)
+                        $header = $row;
+                    else
+                        $data[] = array_combine($header, $row);
+                }
+                fclose($handle);
+            }
+
+            $dataCount = count($data);
+            for ($i = 0; $i < $dataCount; $i ++){
+                User::firstOrCreate($data[$i]);
+            }
+            echo "Products data added successfully"."\n";
+
+
+        }
+        catch(\Exception $e){
+            return $e->getMessage();
+
         }
 
-        $dataCount = count($data);
-        for ($i = 0; $i < $dataCount; $i ++){
-            User::firstOrCreate($data[$i]);
-        }
-        echo "Products data added successfully"."\n";
+
+
     }
 }
