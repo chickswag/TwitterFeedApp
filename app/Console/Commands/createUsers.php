@@ -44,14 +44,14 @@ class createUsers extends Command
         try{
             $files = File::exists(public_path('users.txt'));
             if(!$files){
-               $this->line('File Not Found');
+               $this->error('File Not Found');
             }
+
             //ignore all the empty lines
             $content = file(public_path('users.txt'), FILE_IGNORE_NEW_LINES);
 
             $arrData = [];
             foreach ( $content as $key=>$line){
-
                 $currentArray = explode(' ', preg_replace('/\s*,\s*/', ' ', $line));
                 array_push($arrData,$currentArray);
             }
@@ -60,29 +60,44 @@ class createUsers extends Command
             $users =  [];
             if($dataCount > 0){
                 foreach ($arrData  as $userindex => $objUser){
-
-
-                    foreach ($objUser as $u => $user_name){
+                    foreach ($objUser as $user_name){
                         array_push($users,$user_name);
                     }
 
                 }
                 //insert to DB
                 $arrUsers  = array_unique($users);
-
-                $unserInsert = [];
+                $insertInsert = [];
 
                 // remove follows as it in sot related to user rather, a relationship
                 $key = array_search('follows', $arrUsers);
                 if (false !== $key) {
                     unset($arrUsers[$key]);
                 }
-
-                foreach ($arrUsers as $strName){
-                    $unserInsert['user_name'] = $strName;
-                    User::firstOrCreate($unserInsert);
+                foreach ($arrUsers as $objUserName){
+                    $insertInsert['user_name'] = $objUserName;
+                    User::firstOrCreate($insertInsert);
                 }
-                $this->line('User Added Successfully');
+                //update user ids
+                //start after the keyword follows
+                foreach ($arrData as $data){
+                    $current_output = array_slice($data, 0, 1);
+                    $currentUser    = User::where('user_name',$current_output[0])->first();
+                    $output = array_slice($data, 2);
+                    $arrUserFollowsIds = [];
+                    foreach ($output as $objUserFollows)
+                    {
+                        $userfollowIds  = User::where('user_name',$objUserFollows)->first();
+                        array_push($arrUserFollowsIds,$userfollowIds->id);
+                    }
+
+                    $insertFollowIds = implode('|',$arrUserFollowsIds);
+                    $insert = User::find($currentUser->id);
+                    $insert->user_ids = $insertFollowIds;
+                    $insert->save();
+                }
+
+                $this->alert('Users created successfully');
             }
 
         }
