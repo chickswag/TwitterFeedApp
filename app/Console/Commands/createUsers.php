@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -43,40 +44,51 @@ class createUsers extends Command
         try{
             $files = File::exists(public_path('users.txt'));
             if(!$files){
-                return false;
+               $this->line('File Not Found');
             }
-            $header = null;
-            $data = array();
-            $content = File::get(public_path('users.txt'));
+            //ignore all the empty lines
+            $content = file(public_path('users.txt'), FILE_IGNORE_NEW_LINES);
 
-            foreach (explode("\n", $content) as $key=>$line){
-                $array[$key] = explode(',', $line);
+            $arrData = [];
+            foreach ( $content as $key=>$line){
+
+                $currentArray = explode(' ', preg_replace('/\s*,\s*/', ' ', $line));
+                array_push($arrData,$currentArray);
             }
-            dd($content);
-            if (($handle = fopen($CSVFile,'r')) !== false){
-                while (($row = fgetcsv($handle, 1000, ',')) !==false){
-                    if (!$header)
-                        $header = $row;
-                    else
-                        $data[] = array_combine($header, $row);
+
+            $dataCount = count($arrData);
+            $users =  [];
+            if($dataCount > 0){
+                foreach ($arrData  as $userindex => $objUser){
+
+
+                    foreach ($objUser as $u => $user_name){
+                        array_push($users,$user_name);
+                    }
+
                 }
-                fclose($handle);
-            }
+                //insert to DB
+                $arrUsers  = array_unique($users);
 
-            $dataCount = count($data);
-            for ($i = 0; $i < $dataCount; $i ++){
-                User::firstOrCreate($data[$i]);
-            }
-            echo "Products data added successfully"."\n";
+                $unserInsert = [];
 
+                // remove follows as it in sot related to user rather, a relationship
+                $key = array_search('follows', $arrUsers);
+                if (false !== $key) {
+                    unset($arrUsers[$key]);
+                }
+
+                foreach ($arrUsers as $strName){
+                    $unserInsert['user_name'] = $strName;
+                    User::firstOrCreate($unserInsert);
+                }
+                $this->line('User Added Successfully');
+            }
 
         }
         catch(\Exception $e){
             return $e->getMessage();
 
         }
-
-
-
     }
 }
