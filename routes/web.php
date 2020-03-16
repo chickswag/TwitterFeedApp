@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Artisan;
 Route::resource('/', 'UserController');
 Route::get('/user/{post}','UserController@show')->name('user.show');
 Route::get('/foo', function () {
-    $exitCode = Artisan::call('add:user');
+    $exitCode = Artisan::call('add:feed');
 
     //
 });

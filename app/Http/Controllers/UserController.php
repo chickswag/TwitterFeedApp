@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\UserFeeds;
 use Illuminate\Http\Request;
-use Input;
-use Validator;
-use Redirect;
+
 class UserController extends Controller
 {
     /**
