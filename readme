@@ -8,8 +8,7 @@ instructions ---------------
      DB_PASSWORD="your password"
 2 from your repository terminal run "composer update"
 3 run "php artisan migrate"
-
-4
+4 run "php artisan add:user"
 5
 
 6 php artisan serve
