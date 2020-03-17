@@ -53,61 +53,35 @@ class populateUserFeed extends Command
                 $content = array_filter(array_map("trim", file(public_path('tweets.txt'), FILE_SKIP_EMPTY_LINES)), "strlen");
                 if (count($content) > 0) {
                     $arrData = [];
+                    $data = [];
                     foreach ($content as $key => $line) {
-                        $currentArray = explode(' ', $line);
-                        array_push($arrData, $currentArray);
+                        $currentArray             = explode(' ', $line);
+                        $data['created_at']       = implode(' ',array_slice($currentArray, 0, 2));
+                        $data['user_name']        = implode('',str_replace('>', '', array_slice($currentArray, 2, 1)));
+                        $data['tweet']            = implode(' ',array_slice($currentArray, 3));
+
+                        array_push($arrData, $data);
                     }
 
-                    $dataCount = count($arrData);
-                    $users = [];
-                    if ($dataCount > 0) {
-                        foreach ($arrData as $userindex => $objUser) {
-                            foreach ($objUser as $user_name) {
-                                array_push($users, $user_name);
-                            }
+                    if (count($arrData) > 0) {
 
-                        }
-                        //insert to DB
-                        $arrUsers = array_unique($users);
-                        $insertInsert = [];
-
-                        // remove follows as it in sot related to user rather, a relationship
-                        $key = array_search('follows', $arrUsers);
-                        if (false !== $key) {
-                            unset($arrUsers[$key]);
-                        }
-                        foreach ($arrUsers as $objUserName) {
-                            $insertInsert['user_name'] = $objUserName;
-                            User::firstOrCreate($insertInsert);
-                        }
-                        //update user ids
-
-                        foreach ($arrData as $data) {
-                            //get all the user names before the word follows
-                            $current_output = array_slice($data, 0, 1);
-                            $currentUser = User::where('user_name', $current_output[0])->first();
-
-                            //start after the keyword follows to get users who follow the current user added/created
-                            $output = array_slice($data, 2);
-                            $arrUserFollowsIds = [];
-                            foreach ($output as $objUserFollows) {
-                                $userfollowIds = User::where('user_name', $objUserFollows)->first();
-                                array_push($arrUserFollowsIds, $userfollowIds->id);
-                            }
-
-                            $insertFollowIds = implode('|', $arrUserFollowsIds);
-                            $insert = User::find($currentUser->id);
-                            $insert->user_ids = $insertFollowIds;
-                            $insert->save();
+                        foreach ($arrData as $arrUserFeed) {
+                            //get user id
+                            $objUser = User::where('user_name', $arrUserFeed['user_name'])->first();
+                            unset($arrUserFeed['user_name']);
+                            $arrUserFeed['user_id'] = $objUser->id;
+                            UserFeeds::create($arrUserFeed);
                         }
 
-                        $this->alert('Users created successfully');
+                        $this->alert('Feed created successfully');
                     }
-                } else {
+                }
+                else {
                     $this->info('File is empty...');
                 }
 
-            } else {
+            }
+            else {
                 $this->error('Incorrect character set in the file');
             }
 

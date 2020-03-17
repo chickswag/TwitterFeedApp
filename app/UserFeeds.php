@@ -8,7 +8,7 @@ class UserFeeds extends Model
 {
     protected $table = "user_feeds";
     protected $fillable = [
-        'user_name', 'user_ids'
+         'user_id','tweet','created_at'
     ];
     public function getUser(){
 
