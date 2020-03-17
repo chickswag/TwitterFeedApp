@@ -42,16 +42,17 @@ class createUsers extends Command
     {
 
         try{
-            $files = File::exists(public_path('users.txt'));
+            $fileToBeWorked = public_path('twitter_app/users.txt');
+            $files = File::exists($fileToBeWorked);
             if(!$files){
                $this->error('File Not Found');
             }
 
             //check encoding...
-            $checkFileEncode    = mb_detect_encoding(public_path('users.txt'),'ASCII', true);
+            $checkFileEncode    = mb_detect_encoding(public_path('twitter_app/users.txt'),'ASCII', true);
             if($checkFileEncode === "ASCII"){
                 //ignore all the empty lines
-                $content = array_filter(array_map("trim", file(public_path('users.txt'),FILE_SKIP_EMPTY_LINES)), "strlen");
+                $content = array_filter(array_map("trim", file($fileToBeWorked,FILE_SKIP_EMPTY_LINES)), "strlen");
                 if(count($content) > 0)
                 {
                     $arrData = [];

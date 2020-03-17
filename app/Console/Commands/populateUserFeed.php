@@ -41,17 +41,18 @@ class populateUserFeed extends Command
     public function handle()
     {
         try {
-            $files = File::exists(public_path('tweets.txt'));
+            $fileToBeWorked = public_path('twitter_app/tweets.txt');
+            $files = File::exists($fileToBeWorked);
             if (!$files) {
                 $this->error('File Not Found');
             }
 
             //check encoding...
-            $check = mb_detect_encoding(public_path('tweets.txt'), 'ASCII', true);
+            $check = mb_detect_encoding(public_path('twitter_app/tweets.txt'), 'ASCII', true);
             $isError = false;
             if ($check === "ASCII") {
                 //ignore all the empty lines
-                $content = array_filter(array_map("trim", file(public_path('tweets.txt'), FILE_SKIP_EMPTY_LINES)), "strlen");
+                $content = array_filter(array_map("trim", file($fileToBeWorked, FILE_SKIP_EMPTY_LINES)), "strlen");
                 if (count($content) > 0) {
                     $arrData = [];
                     $data = [];
