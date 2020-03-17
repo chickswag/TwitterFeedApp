@@ -17,7 +17,6 @@ class UserController extends Controller
         $title = 'Tweets Dashboard';
         $users = User::get();
         $feeds = UserFeeds::orderBy('created_at','asc')->get();
-
         return view('layouts.feeds',compact('users','title','feeds'))->render();
     }
 
@@ -78,11 +77,8 @@ class UserController extends Controller
             }
         }
         catch (\Exception $e) {
-
             return $e->getMessage();
         }
-
-
 
     }
 

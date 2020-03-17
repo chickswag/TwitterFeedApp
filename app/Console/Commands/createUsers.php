@@ -48,8 +48,8 @@ class createUsers extends Command
             }
 
             //check encoding...
-            $check = mb_detect_encoding(public_path('users.txt'),'ASCII', true);
-            if($check === "ASCII"){
+            $checkFileEncode    = mb_detect_encoding(public_path('users.txt'),'ASCII', true);
+            if($checkFileEncode === "ASCII"){
                 //ignore all the empty lines
                 $content = array_filter(array_map("trim", file(public_path('users.txt'),FILE_SKIP_EMPTY_LINES)), "strlen");
                 if(count($content) > 0)
@@ -70,17 +70,17 @@ class createUsers extends Command
 
                         }
                         //insert to DB
-                        $arrUsers  = array_unique($users);
-                        $insertInsert = [];
+                        $arrUsers       = array_unique($users);
+                        $insertUsers    = [];
 
                         // remove follows as it in sot related to user rather, a relationship
-                        $key = array_search('follows', $arrUsers);
+                        $key            = array_search('follows', $arrUsers);
                         if (false !== $key) {
                             unset($arrUsers[$key]);
                         }
                         foreach ($arrUsers as $objUserName){
-                            $insertInsert['user_name'] = $objUserName;
-                            User::firstOrCreate($insertInsert);
+                            $insertUsers['user_name'] = $objUserName;
+                            User::firstOrCreate($insertUsers);
                         }
                         //update user ids on the user table for users who follows the original user
                         foreach ($arrData as $data){
@@ -115,11 +115,9 @@ class createUsers extends Command
                 $this->error('Incorrect character set in the file');
             }
 
-
         }
         catch(\Exception $e){
-            return $e->getMessage();
-
+            $this->error($e->getMessage());
         }
     }
 }

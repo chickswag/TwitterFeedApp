@@ -55,11 +55,12 @@ class populateUserFeed extends Command
                 if (count($content) > 0) {
                     $arrData = [];
                     $data = [];
+                    //processing the file into readable array
                     foreach ($content as $key => $line) {
                         $currentArray             = explode(' ', $line);
-                        $data['created_at']       = implode(' ',array_slice($currentArray, 0, 2));
-                        $data['user_name']        = implode('',str_replace('>', '', array_slice($currentArray, 2, 1)));
-                        $data['tweet']            = implode(' ',array_slice($currentArray, 3));
+                        $data['created_at']       = implode(' ', array_slice($currentArray, 0, 2));
+                        $data['user_name']        = implode('', str_replace('>', '', array_slice($currentArray, 2, 1)));
+                        $data['tweet']            = implode(' ', array_slice($currentArray, 3));
 
                         array_push($arrData, $data);
                     }
