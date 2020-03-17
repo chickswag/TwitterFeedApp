@@ -73,6 +73,9 @@ class populateUserFeed extends Command
                                 $objUser = User::where('user_name', $arrUserFeed['user_name'])->first();
                                 if($objUser){
                                     unset($arrUserFeed['user_name']);
+
+                                    //check for duplicate messages by user, if found skip that row
+
                                     $arrUserFeed['user_id'] = $objUser->id;
                                     UserFeeds::create($arrUserFeed);
                                 }
