@@ -75,9 +75,11 @@ class populateUserFeed extends Command
                                     unset($arrUserFeed['user_name']);
 
                                     //check for duplicate messages by user, if found skip that row
-
-                                    $arrUserFeed['user_id'] = $objUser->id;
-                                    UserFeeds::create($arrUserFeed);
+                                    $found = UserFeeds::where('tweet',$arrUserFeed['tweet'])->where('user_id', $objUser->id)->count();
+                                    if($found == 0){
+                                        $arrUserFeed['user_id'] = $objUser->id;
+                                        UserFeeds::create($arrUserFeed);
+                                    }
                                 }
                                 else{
                                     $isError = true;
