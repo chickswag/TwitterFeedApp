@@ -56,7 +56,7 @@ class createUsers extends Command
                 {
                     $arrData = [];
                     foreach ( $content as $key=>$line){
-                        $currentArray = explode(' ', preg_replace('/\s*,\s*/', ' ', $line));
+                        $currentArray = explode(' ', str_replace(', ', ' ', $line));
                         array_push($arrData,$currentArray);
                     }
 
@@ -82,24 +82,24 @@ class createUsers extends Command
                             $insertInsert['user_name'] = $objUserName;
                             User::firstOrCreate($insertInsert);
                         }
-                        //update user ids
-
+                        //update user ids on the user table for users who follows the original user
                         foreach ($arrData as $data){
                             //get all the user names before the word follows
-                            $current_output     = array_slice($data, 0, 1);
-                            $currentUser        = User::where('user_name',$current_output[0])->first();
+                            $originalUser       = implode('',array_slice($data, 0, 1));
+                            $objUser            = User::where('user_name',$originalUser)->first();
 
                             //start after the keyword follows to get users who follow the current user added/created
-                            $output             = array_slice($data, 2);
+                            $userFollows             = array_slice($data, 2);
                             $arrUserFollowsIds  = [];
-                            foreach ($output as $objUserFollows)
+                            foreach ($userFollows as $objUserFollows)
                             {
+                                //get all users that the original user follows
                                 $userfollowIds  = User::where('user_name',$objUserFollows)->first();
                                 array_push($arrUserFollowsIds,$userfollowIds->id);
                             }
 
                             $insertFollowIds = implode('|',$arrUserFollowsIds);
-                            $insert = User::find($currentUser->id);
+                            $insert = User::find($objUser->id);
                             $insert->user_ids = $insertFollowIds;
                             $insert->save();
                         }

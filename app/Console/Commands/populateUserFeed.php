@@ -48,6 +48,7 @@ class populateUserFeed extends Command
 
             //check encoding...
             $check = mb_detect_encoding(public_path('tweets.txt'), 'ASCII', true);
+            $isError = false;
             if ($check === "ASCII") {
                 //ignore all the empty lines
                 $content = array_filter(array_map("trim", file(public_path('tweets.txt'), FILE_SKIP_EMPTY_LINES)), "strlen");
@@ -67,28 +68,41 @@ class populateUserFeed extends Command
 
                         foreach ($arrData as $arrUserFeed) {
                             //get user id
-                            $objUser = User::where('user_name', $arrUserFeed['user_name'])->first();
-                            unset($arrUserFeed['user_name']);
-                            $arrUserFeed['user_id'] = $objUser->id;
-                            UserFeeds::create($arrUserFeed);
-                        }
+                            try{
+                                $objUser = User::where('user_name', $arrUserFeed['user_name'])->first();
+                                if($objUser){
+                                    unset($arrUserFeed['user_name']);
+                                    $arrUserFeed['user_id'] = $objUser->id;
+                                    UserFeeds::create($arrUserFeed);
+                                }
+                                else{
+                                    $isError = true;
+                                }
 
-                        $this->alert('Feed created successfully');
+                            }
+                            catch (\Exception $ex){
+                                $this->error($ex->getMessage());
+                            }
+
+                        }
+                        if($isError){
+                            $this->error("No users found");
+                        }
+                        else{
+                            $this->alert('Feed created successfully');
+                        }
                     }
                 }
                 else {
                     $this->info('File is empty...');
                 }
-
             }
             else {
                 $this->error('Incorrect character set in the file');
             }
 
-
         } catch (\Exception $e) {
-            return $e->getMessage();
-
+            $this->error($e->getMessage());
         }
     }
 }

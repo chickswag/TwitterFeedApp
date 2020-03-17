@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $title = 'Feeds Dashboard';
+        $title = 'Tweets Dashboard';
         $users = User::get();
         $feeds = UserFeeds::orderBy('created_at','asc')->get();
 
@@ -53,7 +53,7 @@ class UserController extends Controller
         try {
             $user = User::where('user_name',$user_name)->first();
             if($user){
-                $title = $user_name. ' feeds ';
+                $title = $user_name. ' tweets ';
                 $userFollowersTweets =  User::where('id',$user->id)->pluck('user_ids');
 
                 $arrIds =  [];

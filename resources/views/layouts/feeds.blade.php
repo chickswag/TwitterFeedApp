@@ -43,7 +43,7 @@
     </div>
         @if(isset($feeds) && count($feeds) == 0)
             <div class="card-body bg-warning">
-            <div class=" ">No Feeds in this timeline</div>
+            <div class=" ">No tweets in this timeline</div>
             </div>
         @else
             <div class="card-body">

@@ -9,7 +9,7 @@
 
             @if(!isset($userFeed))
                 <div class="card-body bg-warning">
-                    <div class=" ">No Feeds in this timeline</div>
+                    <div class=" ">No tweets in this timeline</div>
                 </div>
                 @else
 
