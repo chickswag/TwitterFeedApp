@@ -52,19 +52,18 @@ class UserController extends Controller
 
         try {
             $user = User::where('user_name',$user_name)->first();
-            $userAll = User::get();
             if($user){
                 $title = $user_name. ' feeds ';
-                $userFollowedTweets =  User::where('id',$user->id)->pluck('user_ids');
+                $userFollowersTweets =  User::where('id',$user->id)->pluck('user_ids');
 
                 $arrIds =  [];
-                foreach ( $userFollowedTweets as  $tweets){
-
-                    foreach (explode('|',$tweets) as $tw){
-                        array_push($arrIds, $tw);
+                foreach ( $userFollowersTweets as  $tweets){
+                    foreach (explode('|',$tweets) as $userFollowIds){
+                        array_push($arrIds, (int)$userFollowIds);
                     }
                 }
-                $userFeed =  UserFeeds::whereIn('user_id',[1,2])->orderBy('created_at','asc')->get();
+                array_push($arrIds,$user->id);
+                $userFeed =  UserFeeds::whereIn('user_id',$arrIds)->orderBy('created_at','asc')->get();
                 if(count($userFeed) > 0){
                     return view('layouts.user_feed.user_feed',compact('userFeed','title'))->render();
                 }
