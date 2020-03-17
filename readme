@@ -1,8 +1,8 @@
 **************************************
 *    Instructions...   *
 **************************************
-
-1 on the .env file change the DB connections to your DB
+1 copy and paste the file name .env.example and rename it to .env
+2 on the .env file change the DB connections to your DB
      DB_HOST="your host"
      DB_PORT="your port"
      DB_DATABASE="your DB"
@@ -10,11 +10,11 @@
      DB_PASSWORD="your password"
 
 from your repository terminal
-2 run "composer update"
-3 run "php artisan serve"
-4 run "php artisan migrate"
-5 Place the files in your public folder of the current project "/public/twitter_app/YOURFILES"
-6 run "php artisan add:user"
-7 run "php artisan add:feed"
+3 run "composer update"
+4 run "php artisan serve"
+5 run "php artisan migrate"
+6 Place the files in your public folder of the current project "/public/twitter_app/YOURFILES"
+7 run "php artisan add:user"
+8 run "php artisan add:feed"
 
-8 view application on browser :-):-):-):-):-)
+9 view application on browser :-):-):-):-):-)
